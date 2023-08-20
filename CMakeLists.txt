@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.6)
 
-PROJECT (tinygltf)
+project(tinygltf)
 
-SET(CMAKE_CXX_STANDARD 11)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED On)
+set(CMAKE_CXX_EXTENSIONS Off)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(TINYGLTF_BUILD_LOADER_EXAMPLE "Build loader_example(load glTF and dump infos)" ON)
 option(TINYGLTF_BUILD_GL_EXAMPLES "Build GL exampels(requires glfw, OpenGL, etc)" OFF)
@@ -12,22 +18,22 @@ option(TINYGLTF_HEADER_ONLY "On: header-only mode. Off: create tinygltf library(
 option(TINYGLTF_INSTALL "Install tinygltf files during install step. Usually set to OFF if you include tinygltf through add_subdirectory()" ON)
 
 if (TINYGLTF_BUILD_LOADER_EXAMPLE)
-  ADD_EXECUTABLE ( loader_example
+  add_executable(loader_example
     loader_example.cc
     )
 endif (TINYGLTF_BUILD_LOADER_EXAMPLE)
 
 if (TINYGLTF_BUILD_GL_EXAMPLES)
-  ADD_SUBDIRECTORY ( examples/gltfutil )
-  ADD_SUBDIRECTORY ( examples/glview )
+  add_subdirectory( examples/gltfutil )
+  add_subdirectory( examples/glview )
 endif (TINYGLTF_BUILD_GL_EXAMPLES)
 
 if (TINYGLTF_BUILD_VALIDATOR_EXAMPLE)
-  ADD_SUBDIRECTORY ( examples/validator )
+  add_subdirectory( examples/validator )
 endif (TINYGLTF_BUILD_VALIDATOR_EXAMPLE)
 
 if (TINYGLTF_BUILD_BUILDER_EXAMPLE)
-  ADD_SUBDIRECTORY ( examples/build-gltf )
+  add_subdirectory ( examples/build-gltf )
 endif (TINYGLTF_BUILD_BUILDER_EXAMPLE)
 
 #
@@ -54,7 +60,10 @@ else (TINYGLTF_HEADER_ONLY)
 endif (TINYGLTF_HEADER_ONLY)
 
 if (TINYGLTF_INSTALL)
-
+  install(TARGETS tinygltf EXPORT tinygltfTargets)
+  install(EXPORT tinygltfTargets NAMESPACE tinygltf:: FILE TinyGLTFTargets.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
+  configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/TinyGLTFConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/TinyGLTFConfig.cmake INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/TinyGLTFConfig.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
   # Do not install .lib even if !TINYGLTF_HEADER_ONLY
 
   INSTALL ( FILES
@@ -65,12 +74,6 @@ if (TINYGLTF_INSTALL)
     ${TINYGLTF_EXTRA_SOUECES}
     DESTINATION
     include
-    )
-
-  INSTALL ( FILES
-    cmake/TinyGLTFConfig.cmake
-    DESTINATION
-    cmake
     )
 
 endif(TINYGLTF_INSTALL)
