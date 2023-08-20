@@ -3650,7 +3650,7 @@ static bool ParseJsonAsValue(Value *ret, const detail::json &o) {
       break;
     case detail::json::value_t::null:
     case detail::json::value_t::discarded:
-    case detail::json::value_t::binary:
+    //case detail::json::value_t::binary:
       // default:
       break;
   }
